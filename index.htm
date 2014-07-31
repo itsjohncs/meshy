@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+    <meta charset="utf-8">
+	<title>Meshy</title>
+	<style>
+		body {
+			font-size: 24px;
+		}
+
+		button {
+			font-size: 24px;
+			width: 200px;
+			height: 40px;
+		}
+
+		textarea {
+			width: 100%;
+			height: 300px;
+		}
+	</style>
+</head>
+<body>
+	<button id="scan-button">Start Scanning</button>
+	<textarea id="scan-log" readonly></textarea>
+	<ul id="scan-results"></ul>
+	<script>
+		var buttonElement = document.getElementById("scan-button");
+		var resultsElement = document.getElementById("scan-results");
+		var logElement = document.getElementById("scan-log");
+		var manager = navigator.mozWifiP2pManager;
+
+		// The log isn't getting cleared between updates (which is kinda cool
+		// but undesirable in this case), so we have to do it explicitly.
+		logElement.value = "";
+
+		var writeLog = function (text) {
+			logElement.value = text + "\n" + logElement.value;
+		}
+
+		var setPeerList = function (list) {
+			console.log("setPeerList:", list);
+			writeLog("Writing peer list of length " + list.length);
+
+			resultsElement.innerHTML = "";
+			for (var i = 0; i < list.length; ++i) {
+				var newItem = document.createElement("li");
+				newItem.innerHTML = list[i];
+				resultsElement.appendChild(newItem);
+			}
+		}
+
+		var scanEnabled = false, setScanEnabledPending = false, interval = null;
+		buttonElement.onclick = function () {
+			if (setScanEnabledPending) {
+				writeLog("Request pending. Relax.");
+				return;
+			}
+			setScanEnabledPending = true;
+
+			var updatePeerListTimerFunc = function () {
+				var request = manager.getPeerList();
+				console.log("Made request for peer list", request);
+				writeLog("Made request for peer list");
+				request.onsuccess = function (req) {
+					writeLog("Successfully got peer list of length " + request.result.length);
+					var peerList = [];
+					for (var i = 0; i < request.result.length; ++i) {
+						peerList.push(request.result[i].name + ": " + request.result[i].address);
+					}
+					setPeerList(peerList);
+				}
+				request.onerror = function () {
+					writeLog("Failed to get peer list.");
+				}
+			}
+
+			writeLog("Setting scanEnabled to " + !scanEnabled);
+			var request = manager.setScanEnabled(!scanEnabled);
+			console.log("setScanEanbled request", request);
+			request.onsuccess = function () {
+				scanEnabled = !scanEnabled;
+				writeLog("Successfully set scan enabled to " + scanEnabled);
+				buttonElement.innerHTML = scanEnabled ? "Stop Scanning" : "Start Scanning";
+				if (scanEnabled) {
+					interval = setInterval(updatePeerListTimerFunc, 1000);
+				} else {
+					clearInterval(interval);
+				}
+				setScanEnabledPending = false;
+			}
+			request.onerror = function () {
+				writeLog("Failed to set scan enabled");
+				setScanEnabledPending = false;
+			}
+		}
+
+		writeLog("Starting meshy...");
+	</script>
+</body>
+</html>

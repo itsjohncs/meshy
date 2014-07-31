@@ -1,0 +1,19 @@
+{
+  "name": "Meshy",
+  "permissions": {
+    "wifi-manage": {
+      "description": "Required to access wifi-direct."
+    }
+  },
+  "description": "Ever wanted a mesh network atop Wifi Direct?",
+  "launch_path": "/index.htm",
+  "icons": {
+    "60": "/img/sasuke_60.png",
+    "128": "/img/sasuke_128.png"
+  },
+  "developer": {
+    "name": "John Sullivan",
+    "url": "http://johnsullivan.name"
+  },
+  "default_locale": "en"
+}
