@@ -13,7 +13,7 @@ You're not going to be able to without building your own development version of 
 Licensing
 ---------
 
-I am writing this as an employee of Mozilla, so I don't have the ability to place this under an open license. I'll try to resolve this at some point, but not the highest priority for me at the moment. Feel free to ping me if you actually want to use some of this code and I'll go bother the correct people.
+I am writing this as an employee of Mozilla, so I don't have the ability to place this under an open license (not to say Mozilla would be against it, just that I don't actually own the copyright to it because it's work made for hire or whatever that term is). I'll try to resolve this at some point, but not the highest priority for me at the moment. Feel free to ping me if you actually want to use some of this code and I'll go bother the correct people.
 
 Attribution
 -----------
